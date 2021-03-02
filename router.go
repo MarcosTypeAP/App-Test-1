@@ -42,6 +42,7 @@ type User struct {
 	Description       string `json:"description"`        //
 	Conduct           string `json:"conduct"`            //
 	Ideals            string `json:"ideals"`             //
+	Active            bool   `json:"active"`
 }
 
 //Users is a map of UserBoss by id
@@ -61,11 +62,13 @@ func RunServer(address string, port string) {
 
 	router.HandleFunc("/api/userboss/{id}", GetUserBossByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userboss/searchbyname/{searchString}", GetUserBossByNameHandler).Methods("GET")
-	router.HandleFunc("/api/userboss", PostUserBossHandler).Methods("Post")
+	router.HandleFunc("/api/userboss", PostUserBossHandler).Methods("POST")
+	router.HandleFunc("/api/userboss/{id}", DeleteUserBossHandler).Methods("DELETE")
 
 	router.HandleFunc("/api/userworker/{id}", GetUserWorkerByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userworker/searchbyname/{searchString}", GetUserWorkerByNameHandler).Methods("GET")
-	router.HandleFunc("/api/userworker", PostUserWorkerHandler).Methods("Post")
+	router.HandleFunc("/api/userworker", PostUserWorkerHandler).Methods("POST")
+	router.HandleFunc("/api/userworker/{id}", DeleteUserWorkerHandler).Methods("DELETE")
 
 	// router.HandleFunc("/api/persons", GetPersonHandler).Methods("GET")
 	// router.HandleFunc("/api/persons", PostPersonHandler).Methods("POST")
@@ -99,6 +102,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 	var u userBoss
 
+	var x bool
 	for result.Next() {
 		err := result.Scan(
 			&u.UserBossID,
@@ -108,6 +112,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Name,
 			&u.LastName,
 			&u.DateOfBirth,
+			&x,
 		)
 		ErrorPrinter(err)
 	}
@@ -166,6 +171,16 @@ func PostUserBossHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+//DeleteUserBossHandler deactivates an user_boss
+func DeleteUserBossHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userBossID := vars["id"]
+
+	DeleteDB(userBossID, 0)
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 //GetUserWorkerByIDHandler sends the user searched by id
 func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -175,6 +190,7 @@ func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 	var u User
 
+	var x bool
 	for result.Next() {
 		err := result.Scan(
 			&u.UserBossID,
@@ -199,6 +215,7 @@ func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Description,
 			&u.Conduct,
 			&u.Ideals,
+			&x,
 		)
 		ErrorPrinter(err)
 	}
@@ -254,6 +271,16 @@ func PostUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
 
 	InsertDB(userWorker, 1)
 	w.WriteHeader(http.StatusCreated)
+}
+
+//DeleteUserWorkerHandler deactivates an user_boss
+func DeleteUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userWorkerID := vars["id"]
+
+	DeleteDB(userWorkerID, 1)
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 ////GetPersonHandler is GET

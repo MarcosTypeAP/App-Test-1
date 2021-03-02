@@ -120,7 +120,7 @@ func SelectByNameDB(searchString string, userType int8) *sql.Rows {
 	defer db.Close()
 
 	x := "%"
-	result, err := db.Query(fmt.Sprintf("SELECT `name`, `last_name`, %s FROM %s WHERE CONCAT(`name`, ' ', `last_name`) LIKE '%s%s%s' ORDER BY `name`",
+	result, err := db.Query(fmt.Sprintf("SELECT `name`, `last_name`, %s FROM %s WHERE CONCAT(`name`, ' ', `last_name`) LIKE '%s%s%s' AND `active` = 1 ORDER BY `name`",
 		userTypeID,
 		table,
 		x,
@@ -146,13 +146,38 @@ func SelectDB(userID string, userType int8) *sql.Rows {
 	}
 	db := OpenConnectionDB()
 	defer db.Close()
-	result, err := db.Query(fmt.Sprintf("SELECT * FROM %s WHERE %s = %s",
+	result, err := db.Query(fmt.Sprintf("SELECT * FROM %s WHERE %s = %s AND `active` = 1",
 		table,
 		userTypeID,
 		userID,
 	))
 	ErrorPrinter(err)
 	return result
+}
+
+//DeleteDB deactivates an user
+func DeleteDB(userID string, userType int8) {
+	var table string
+	var userTypeID string
+	switch userType {
+	case 0: //boss
+		table = "user_boss"
+		userTypeID = "user_boss_id"
+	case 1: //worker
+		table = "user_worker"
+		userTypeID = "user_worker_id"
+	}
+
+	db := OpenConnectionDB()
+	defer db.Close()
+
+	delete, err := db.Query(fmt.Sprintf("UPDATE %s SET `active` = 0 WHERE %s = %s",
+		table,
+		userTypeID,
+		userID,
+	))
+	ErrorPrinter(err)
+	defer delete.Close()
 }
 
 // //UpdateDB updates values from database
