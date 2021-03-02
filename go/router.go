@@ -63,6 +63,7 @@ func RunServer(address string, port string) {
 	router.HandleFunc("/api/userboss/{id}", GetUserBossByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userboss/searchbyname/{searchString}", GetUserBossByNameHandler).Methods("GET")
 	router.HandleFunc("/api/userboss", PostUserBossHandler).Methods("POST")
+	// router.HandleFunc("/api/userboss/{id}", PutUserBossHandler).Methods("PUT")
 	router.HandleFunc("/api/userboss/{id}", DeleteUserBossHandler).Methods("DELETE")
 
 	router.HandleFunc("/api/userworker/{id}", GetUserWorkerByIDHandler).Methods("GET")
@@ -118,6 +119,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := json.Marshal(u)
 	ErrorPrinter(err)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
 	w.WriteHeader(http.StatusOK)
@@ -170,6 +172,21 @@ func PostUserBossHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 }
+
+//PutUserBossHandler updates the properties of user_boss
+// func PutUserBossHandler(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	searchID := vars["id"]
+
+// 	var userBoss User
+
+// 	err := json.NewDecoder(r.Body).Decode(&userBoss)
+// 	ErrorPrinter(err)
+
+// 	UpdateDB(userBoss, searchID, 0)
+
+// 	w.WriteHeader(http.StatusNoContent)
+// }
 
 //DeleteUserBossHandler deactivates an user_boss
 func DeleteUserBossHandler(w http.ResponseWriter, r *http.Request) {

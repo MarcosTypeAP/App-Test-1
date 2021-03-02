@@ -155,6 +155,28 @@ func SelectDB(userID string, userType int8) *sql.Rows {
 	return result
 }
 
+//UpdateDB updates the properties of an user
+// func UpdateDB(user User, userID string, userType int8) {
+// 	var table string
+// 	var userTypeID string
+// 	switch userType {
+// 	case 0: //boss
+// 		table = "user_boss"
+// 		userTypeID = "user_boss_id"
+// 	case 1: //worker
+// 		table = "user_worker"
+// 		userTypeID = "user_worker_id"
+// 	}
+
+// 	db := OpenConnectionDB()
+// 	defer db.Close()
+
+// 	update, err := db.Query(fmt.Sprintf("UPDATE %s SET ",
+
+// 	))
+// 	ErrorPrinter(err)
+// }
+
 //DeleteDB deactivates an user
 func DeleteDB(userID string, userType int8) {
 	var table string
