@@ -165,15 +165,19 @@ func GetUserBossByNameHandler(w http.ResponseWriter, r *http.Request) {
 	result := SelectByNameDB(searchString, 0)
 	defer result.Close()
 
-	var users = make(map[int]User)
+	var users []User
 
 	for result.Next() {
 		var userB User
-		var userBossID int
-		err := result.Scan(&userB.Name, &userB.LastName, &userBossID)
+		err := result.Scan(
+			&userB.UserBossID,
+			&userB.Name,
+			&userB.LastName,
+			&userB.Email,
+		)
 		ErrorPrinter(err)
-		fmt.Println(userBossID)
-		users[userBossID] = userB
+		fmt.Println(userB.UserBossID)
+		users = append(users, userB)
 	}
 
 	data, err := json.Marshal(users)
@@ -327,15 +331,19 @@ func GetUserWorkerByNameHandler(w http.ResponseWriter, r *http.Request) {
 	result := SelectByNameDB(searchString, 1)
 	defer result.Close()
 
-	var users = make(map[int]User)
+	var users []User
 
 	for result.Next() {
 		var userW User
-		var userWorkerID int
-		err := result.Scan(&userW.Name, &userW.LastName, &userWorkerID)
+		err := result.Scan(
+			&userW.UserWorkerID,
+			&userW.Name,
+			&userW.LastName,
+			&userW.Email,
+		)
 		ErrorPrinter(err)
-		fmt.Println(userWorkerID)
-		users[userWorkerID] = userW
+		fmt.Println(userW.UserWorkerID)
+		users = append(users, userW)
 	}
 
 	data, err := json.Marshal(users)

@@ -141,7 +141,7 @@ func SelectByNameDB(searchString string, userType int8) *sql.Rows {
 	defer db.Close()
 
 	x := "%"
-	result, err := db.Query(fmt.Sprintf("SELECT `name`, `last_name`, %s FROM %s WHERE CONCAT(`name`, ' ', `last_name`) LIKE '%s%s%s' AND `active` = 1 ORDER BY `name`",
+	result, err := db.Query(fmt.Sprintf("SELECT %s, `name`, `last_name`, `email` FROM %s WHERE CONCAT(`name`, ' ', `last_name`) LIKE '%s%s%s' AND `active` = 1 ORDER BY `name`",
 		userTypeID,
 		table,
 		x,
