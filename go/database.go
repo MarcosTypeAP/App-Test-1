@@ -103,6 +103,27 @@ func InsertDB(user User, userType int8) {
 	defer insert.Close()
 }
 
+//SelectAllDB selects all users
+func SelectAllDB(userType int8) *sql.Rows {
+	var table string
+	switch userType {
+	case 0: //boss
+		table = "user_boss"
+	case 1: //worker
+		table = "user_worker"
+	}
+
+	db := OpenConnectionDB()
+	defer db.Close()
+
+	result, err := db.Query(fmt.Sprintf("SELECT * FROM %s ORDER BY `name`",
+		table,
+	))
+	ErrorPrinter(err)
+
+	return result
+}
+
 //SelectByNameDB select values by search
 func SelectByNameDB(searchString string, userType int8) *sql.Rows {
 	var table string
@@ -156,26 +177,27 @@ func SelectDB(userID string, userType int8) *sql.Rows {
 }
 
 //UpdateDB updates the properties of an user
-// func UpdateDB(user User, userID string, userType int8) {
-// 	var table string
-// 	var userTypeID string
-// 	switch userType {
-// 	case 0: //boss
-// 		table = "user_boss"
-// 		userTypeID = "user_boss_id"
-// 	case 1: //worker
-// 		table = "user_worker"
-// 		userTypeID = "user_worker_id"
-// 	}
+func UpdateDB(user User, userID string, userType int8) {
+	// var table string
+	// var userTypeID string
+	// switch userType {
+	// case 0: //boss
+	// 	table = "user_boss"
+	// 	userTypeID = "user_boss_id"
+	// case 1: //worker
+	// 	table = "user_worker"
+	// 	userTypeID = "user_worker_id"
+	// }
 
-// 	db := OpenConnectionDB()
-// 	defer db.Close()
+	// db := OpenConnectionDB()
+	// defer db.Close()
 
-// 	update, err := db.Query(fmt.Sprintf("UPDATE %s SET ",
+	fmt.Println(user)
+	// update, err := db.Query(fmt.Sprintf("UPDATE %s SET ",
 
-// 	))
-// 	ErrorPrinter(err)
-// }
+	// ))
+	// ErrorPrinter(err)
+}
 
 //DeleteDB deactivates an user
 func DeleteDB(userID string, userType int8) {

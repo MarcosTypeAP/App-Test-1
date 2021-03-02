@@ -21,30 +21,30 @@ var People = make(map[int]Person)
 
 //User is the boss user   // = not required
 type User struct {
-	UserBossID        int    `json:"user_boss_id"`
-	UserWorkerID      int    `json:"user_worker_id"` //
-	PhoneNumber       string `json:"phone_number"`
-	Country           string `json:"country"`
-	Nationality       string `json:"nationality"`
-	Dni               uint   `json:"dni"`
-	Email             string `json:"email"`
-	Name              string `json:"name"`
-	LastName          string `json:"last_name"`
-	DateOfBirth       string `json:"date_of_birth"`
-	Gender            string `json:"gender"` //
-	Address           string `json:"address"`
-	VehicleID         uint8  `json:"vehicle_id"`        //
-	Pc                bool   `json:"pc"`                //
-	Children          bool   `json:"children"`          //
-	MaritalStatusID   uint8  `json:"marital_status_id"` //
-	ProfessionID      uint   `json:"profession_id"`
-	PurchasedProperty bool   `json:"purchased_property"` //
-	LivingPlaceID     uint8  `json:"living_place_id"`    //
-	Description       string `json:"description"`        //
-	Conduct           string `json:"conduct"`            //
-	Ideals            string `json:"ideals"`             //
-	//UserDefaultImageURL string `json:"user_default_image_url"`
-	Active bool `json:"active"`
+	UserBossID        int    `json:"user_boss_id,omitempty"`
+	UserWorkerID      int    `json:"user_worker_id,omitempty"` //
+	PhoneNumber       string `json:"phone_number,omitempty"`
+	Country           string `json:"country,omitempty"`
+	Nationality       string `json:"nationality,omitempty"`
+	Dni               uint   `json:"dni,omitempty"`
+	Email             string `json:"email,omitempty"`
+	Name              string `json:"name,omitempty"`
+	LastName          string `json:"last_name,omitempty"`
+	DateOfBirth       string `json:"date_of_birth,omitempty"`
+	Gender            string `json:"gender,omitempty"` //
+	Address           string `json:"address,omitempty"`
+	VehicleID         uint8  `json:"vehicle_id,omitempty"`        //
+	Pc                bool   `json:"pc,omitempty"`                //
+	Children          bool   `json:"children,omitempty"`          //
+	MaritalStatusID   uint8  `json:"marital_status_id,omitempty"` //
+	ProfessionID      uint   `json:"profession_id,omitempty"`
+	PurchasedProperty bool   `json:"purchased_property,omitempty"` //
+	LivingPlaceID     uint8  `json:"living_place_id,omitempty"`    //
+	Description       string `json:"description,omitempty"`        //
+	Conduct           string `json:"conduct,omitempty"`            //
+	Ideals            string `json:"ideals,omitempty"`             //
+	Active            bool   `json:"active,omitempty"`
+	//UserImageURL string `json:"user_image_url,omitempty"`
 }
 
 //Users is a map of UserBoss by id
@@ -65,12 +65,14 @@ func RunServer(address string, port string) {
 	}
 	router.HandleFunc("/", HomeHandler).Methods("GET")
 
+	router.HandleFunc("/api/userboss", GetUserBossHandler).Methods("GET")
 	router.HandleFunc("/api/userboss/{id}", GetUserBossByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userboss/searchbyname/{searchString}", GetUserBossByNameHandler).Methods("GET")
 	router.HandleFunc("/api/userboss", PostUserBossHandler).Methods("POST")
 	// router.HandleFunc("/api/userboss/{id}", PutUserBossHandler).Methods("PUT")
 	router.HandleFunc("/api/userboss/{id}", DeleteUserBossHandler).Methods("DELETE")
 
+	router.HandleFunc("/api/userworker", GetUserWorkerHandler).Methods("GET")
 	router.HandleFunc("/api/userworker/{id}", GetUserWorkerByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userworker/searchbyname/{searchString}", GetUserWorkerByNameHandler).Methods("GET")
 	router.HandleFunc("/api/userworker", PostUserWorkerHandler).Methods("POST")
@@ -90,6 +92,40 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./assets/user-default-image.png")
 }
 
+//GetUserBossHandler sends all users
+func GetUserBossHandler(w http.ResponseWriter, r *http.Request) {
+	var users = make(map[int]User)
+
+	result := SelectAllDB(0)
+	defer result.Close()
+
+	for result.Next() {
+		var u User
+
+		var x bool
+		err := result.Scan(
+			&u.UserBossID,
+			&u.Dni,
+			&u.Email,
+			&u.PhoneNumber,
+			&u.Name,
+			&u.LastName,
+			&u.DateOfBirth,
+			&x,
+		)
+		ErrorPrinter(err)
+
+		users[u.UserBossID] = u
+	}
+
+	data, err := json.Marshal(users)
+	ErrorPrinter(err)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
+	w.WriteHeader(http.StatusOK)
+}
+
 //GetUserBossByIDHandler sends the user searched by id
 func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -97,17 +133,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(searchID)
 	result := SelectDB(searchID, 0)
 
-	type userBoss struct {
-		UserBossID  int    `json:"user_boss_id"`
-		Dni         uint   `json:"dni"`
-		Email       string `json:"email"`
-		PhoneNumber string `json:"phone_number"`
-		Name        string `json:"name"`
-		LastName    string `json:"last_name"`
-		DateOfBirth string `json:"date_of_birth"`
-	}
-
-	var u userBoss
+	var u User
 
 	var x bool
 	for result.Next() {
@@ -139,15 +165,10 @@ func GetUserBossByNameHandler(w http.ResponseWriter, r *http.Request) {
 	result := SelectByNameDB(searchString, 0)
 	defer result.Close()
 
-	type userBoss struct {
-		Name     string `json:"name"`
-		LastName string `json:"last_name"`
-	}
-
-	var users = make(map[int]userBoss)
+	var users = make(map[int]User)
 
 	for result.Next() {
-		var userB userBoss
+		var userB User
 		var userBossID int
 		err := result.Scan(&userB.Name, &userB.LastName, &userBossID)
 		ErrorPrinter(err)
@@ -204,6 +225,55 @@ func DeleteUserBossHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+//GetUserWorkerHandler sends all users
+func GetUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
+	var users = make(map[int]User)
+
+	result := SelectAllDB(1)
+	// defer result.Close()
+
+	for result.Next() {
+		var u User
+
+		var x bool
+		err := result.Scan(
+			&u.UserWorkerID,
+			&u.UserBossID,
+			&u.PhoneNumber,
+			&u.Country,
+			&u.Nationality,
+			&u.Dni,
+			&u.Email,
+			&u.Name,
+			&u.LastName,
+			&u.DateOfBirth,
+			&u.Gender,
+			&u.Address,
+			&u.VehicleID,
+			&u.Pc,
+			&u.Children,
+			&u.MaritalStatusID,
+			&u.ProfessionID,
+			&u.PurchasedProperty,
+			&u.LivingPlaceID,
+			&u.Description,
+			&u.Conduct,
+			&u.Ideals,
+			&x,
+		)
+		ErrorPrinter(err)
+
+		users[u.UserWorkerID] = u
+	}
+
+	data, err := json.Marshal(users)
+	ErrorPrinter(err)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
+	w.WriteHeader(http.StatusOK)
+}
+
 //GetUserWorkerByIDHandler sends the user searched by id
 func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -216,8 +286,8 @@ func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 	var x bool
 	for result.Next() {
 		err := result.Scan(
-			&u.UserBossID,
 			&u.UserWorkerID,
+			&u.UserBossID,
 			&u.PhoneNumber,
 			&u.Country,
 			&u.Nationality,
@@ -257,15 +327,10 @@ func GetUserWorkerByNameHandler(w http.ResponseWriter, r *http.Request) {
 	result := SelectByNameDB(searchString, 1)
 	defer result.Close()
 
-	type userWorker struct {
-		Name     string `json:"name"`
-		LastName string `json:"last_name"`
-	}
-
-	var users = make(map[int]userWorker)
+	var users = make(map[int]User)
 
 	for result.Next() {
-		var userW userWorker
+		var userW User
 		var userWorkerID int
 		err := result.Scan(&userW.Name, &userW.LastName, &userWorkerID)
 		ErrorPrinter(err)
