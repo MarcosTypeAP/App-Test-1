@@ -87,7 +87,7 @@ func RunServer(address string, port string) {
 //HomeHandler is the home page
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// fmt.Fprintf(w, "Home")
-	http.ServeFile(w, r, "./user-default-image.png")
+	http.ServeFile(w, r, "./assets/user-default-image.png")
 }
 
 //GetUserBossByIDHandler sends the user searched by id
