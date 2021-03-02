@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -51,9 +52,12 @@ var Users = make(map[int]User)
 //RunServer runs the server
 func RunServer(address string, port string) {
 	router := mux.NewRouter().StrictSlash(false)
+	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	origins := handlers.AllowedOrigins([]string{"*"})
 	server := &http.Server{
 		Addr:           address + ":" + port,
-		Handler:        router,
+		Handler:        handlers.CORS(headers, methods, origins)(router),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
@@ -119,7 +123,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := json.Marshal(u)
 	ErrorPrinter(err)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
 	w.WriteHeader(http.StatusOK)
