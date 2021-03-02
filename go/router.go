@@ -43,7 +43,8 @@ type User struct {
 	Description       string `json:"description"`        //
 	Conduct           string `json:"conduct"`            //
 	Ideals            string `json:"ideals"`             //
-	Active            bool   `json:"active"`
+	//UserDefaultImageURL string `json:"user_default_image_url"`
+	Active bool `json:"active"`
 }
 
 //Users is a map of UserBoss by id
@@ -85,7 +86,8 @@ func RunServer(address string, port string) {
 
 //HomeHandler is the home page
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Home")
+	// fmt.Fprintf(w, "Home")
+	http.ServeFile(w, r, "../assets/user-default-image.png")
 }
 
 //GetUserBossByIDHandler sends the user searched by id
