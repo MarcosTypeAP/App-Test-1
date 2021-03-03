@@ -79,11 +79,6 @@ func RunServer(address string, port string) {
 	router.HandleFunc("/api/userworker/{id}", PutUserWorkerHandler).Methods("PUT")
 	router.HandleFunc("/api/userworker/{id}", DeleteUserWorkerHandler).Methods("DELETE")
 
-	// router.HandleFunc("/api/persons", GetPersonHandler).Methods("GET")
-	// router.HandleFunc("/api/persons", PostPersonHandler).Methods("POST")
-	// router.HandleFunc("/api/persons/{id}", PutPersonHandler).Methods("PUT")
-	// router.HandleFunc("/api/persons/{id}", DeletePersonHandler).Methods("DELETE")
-
 	server.ListenAndServe()
 }
 
@@ -404,73 +399,3 @@ func DeleteUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
-
-////GetPersonHandler is GET
-// func GetPersonHandler(w http.ResponseWriter, r *http.Request) {
-// 	result := SelectDB()
-
-// 	for result.Next() {
-// 		var person Person
-// 		var personID int
-// 		err := result.Scan(&personID, &person.Name, &person.LastName)
-// 		fmt.Println(personID)
-
-// 		ErrorPrinter(err)
-
-// 		People[personID] = person
-// 	}
-// 	result.Close()
-
-// 	data, err := json.Marshal(People)
-// 	ErrorPrinter(err)
-
-// 	fmt.Println(People)
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.Write(data)
-// 	w.WriteHeader(http.StatusOK)
-// }
-
-// //PostPersonHandler is POST
-// func PostPersonHandler(w http.ResponseWriter, r *http.Request) {
-// 	var people = make(map[string]Person)
-
-// 	err := json.NewDecoder(r.Body).Decode(&people)
-// 	ErrorPrinter(err)
-// 	fmt.Println(people)
-
-// 	for _, value := range people {
-// 		InsertDB(value.Name, value.LastName)
-// 	}
-// 	w.WriteHeader(http.StatusCreated)
-// }
-
-// //PutPersonHandler is PUT
-// func PutPersonHandler(w http.ResponseWriter, r *http.Request) {
-// 	var person Person
-
-// 	vars := mux.Vars(r)
-// 	id, err := strconv.ParseInt(vars["id"], 10, 64)
-// 	ErrorPrinter(err)
-
-// 	err = json.NewDecoder(r.Body).Decode(&person)
-// 	ErrorPrinter(err)
-// 	fmt.Println(person)
-
-// 	err1 := UpdateDB(person, id)
-// 	if err1 {
-// 		fmt.Println("No Content To Update")
-// 	}
-
-// 	w.WriteHeader(http.StatusNoContent)
-// }
-
-// //DeletePersonHandler is DELETE
-// func DeletePersonHandler(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	id, err := strconv.ParseInt(vars["id"], 10, 64) //string, base, bitSize
-// 	ErrorPrinter(err)
-
-// 	DeleteDB(id)
-// 	w.WriteHeader(http.StatusNoContent)
-// }
