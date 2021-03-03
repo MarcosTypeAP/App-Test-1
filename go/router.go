@@ -52,6 +52,7 @@ func RunServer(address string, port string) {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
 	router.HandleFunc("/", HomeHandler).Methods("GET")
 
 	router.HandleFunc("/api/userboss", GetUserBossHandler).Methods("GET")
