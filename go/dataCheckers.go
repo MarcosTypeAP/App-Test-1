@@ -1,3 +1,7 @@
+package main
+
+import "strconv"
+
 //CheckDataUpdate checks what data exist in the json for Updates
 func CheckDataUpdate(user User) string {
 	var vars string

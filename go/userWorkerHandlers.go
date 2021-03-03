@@ -1,3 +1,13 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
+
 //GetUserWorkerHandler sends all users
 func GetUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
 	var users = make(map[int]User)
