@@ -34,17 +34,17 @@ type User struct {
 	Gender            string `json:"gender,omitempty"` //
 	Address           string `json:"address,omitempty"`
 	VehicleID         uint8  `json:"vehicle_id,omitempty"`        //
-	Pc                bool   `json:"pc,omitempty"`                //
-	Children          bool   `json:"children,omitempty"`          //
+	Pc                uint8  `json:"pc,omitempty"`                //
+	Children          uint8  `json:"children,omitempty"`          //
 	MaritalStatusID   uint8  `json:"marital_status_id,omitempty"` //
 	ProfessionID      uint   `json:"profession_id,omitempty"`
-	PurchasedProperty bool   `json:"purchased_property,omitempty"` //
+	PurchasedProperty uint8  `json:"purchased_property,omitempty"` //
 	LivingPlaceID     uint8  `json:"living_place_id,omitempty"`    //
 	Description       string `json:"description,omitempty"`        //
 	Conduct           string `json:"conduct,omitempty"`            //
 	Ideals            string `json:"ideals,omitempty"`             //
-	Active            bool   `json:"active,omitempty"`
-	//UserImageURL string `json:"user_image_url,omitempty"`
+	UserImageURL      string `json:"user_image_url,omitempty"`
+	Active            bool   `json:"active,omitempty"` //
 }
 
 //Users is a map of UserBoss by id
@@ -69,7 +69,7 @@ func RunServer(address string, port string) {
 	router.HandleFunc("/api/userboss/{id}", GetUserBossByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userboss/searchbyname/{searchString}", GetUserBossByNameHandler).Methods("GET")
 	router.HandleFunc("/api/userboss", PostUserBossHandler).Methods("POST")
-	// router.HandleFunc("/api/userboss/{id}", PutUserBossHandler).Methods("PUT")
+	router.HandleFunc("/api/userboss/{id}", PutUserBossHandler).Methods("PUT")
 	router.HandleFunc("/api/userboss/{id}", DeleteUserBossHandler).Methods("DELETE")
 
 	router.HandleFunc("/api/userworker", GetUserWorkerHandler).Methods("GET")
@@ -111,6 +111,7 @@ func GetUserBossHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Name,
 			&u.LastName,
 			&u.DateOfBirth,
+			&u.UserImageURL,
 			&x,
 		)
 		ErrorPrinter(err)
@@ -145,6 +146,7 @@ func GetUserBossByIDHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Name,
 			&u.LastName,
 			&u.DateOfBirth,
+			&u.UserImageURL,
 			&x,
 		)
 		ErrorPrinter(err)
@@ -174,6 +176,7 @@ func GetUserBossByNameHandler(w http.ResponseWriter, r *http.Request) {
 			&userB.Name,
 			&userB.LastName,
 			&userB.Email,
+			&userB.UserImageURL,
 		)
 		ErrorPrinter(err)
 		fmt.Println(userB.UserBossID)
@@ -205,19 +208,21 @@ func PostUserBossHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //PutUserBossHandler updates the properties of user_boss
-// func PutUserBossHandler(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	searchID := vars["id"]
+func PutUserBossHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	searchID := vars["id"]
 
-// 	var userBoss User
+	var userBoss User
 
-// 	err := json.NewDecoder(r.Body).Decode(&userBoss)
-// 	ErrorPrinter(err)
+	err := json.NewDecoder(r.Body).Decode(&userBoss)
+	ErrorPrinter(err)
 
-// 	UpdateDB(userBoss, searchID, 0)
+	fmt.Println(userBoss)
 
-// 	w.WriteHeader(http.StatusNoContent)
-// }
+	UpdateDB(userBoss, searchID, 0)
+
+	w.WriteHeader(http.StatusNoContent)
+}
 
 //DeleteUserBossHandler deactivates an user_boss
 func DeleteUserBossHandler(w http.ResponseWriter, r *http.Request) {
@@ -263,6 +268,7 @@ func GetUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Description,
 			&u.Conduct,
 			&u.Ideals,
+			&u.UserImageURL,
 			&x,
 		)
 		ErrorPrinter(err)
@@ -312,6 +318,7 @@ func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 			&u.Description,
 			&u.Conduct,
 			&u.Ideals,
+			&u.UserImageURL,
 			&x,
 		)
 		ErrorPrinter(err)
@@ -340,6 +347,7 @@ func GetUserWorkerByNameHandler(w http.ResponseWriter, r *http.Request) {
 			&userW.Name,
 			&userW.LastName,
 			&userW.Email,
+			&userW.UserImageURL,
 		)
 		ErrorPrinter(err)
 		fmt.Println(userW.UserWorkerID)
@@ -367,6 +375,23 @@ func PostUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
 
 	InsertDB(userWorker, 1)
 	w.WriteHeader(http.StatusCreated)
+}
+
+//PutUserWorkerHandler updates the properties of user_boss
+func PutUserWorkerHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	searchID := vars["id"]
+
+	var userWorker User
+
+	err := json.NewDecoder(r.Body).Decode(&userWorker)
+	ErrorPrinter(err)
+
+	fmt.Println(userWorker)
+
+	UpdateDB(userWorker, searchID, 1)
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 //DeleteUserWorkerHandler deactivates an user_boss
