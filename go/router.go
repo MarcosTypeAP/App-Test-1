@@ -76,6 +76,7 @@ func RunServer(address string, port string) {
 	router.HandleFunc("/api/userworker/{id}", GetUserWorkerByIDHandler).Methods("GET")
 	router.HandleFunc("/api/userworker/searchbyname/{searchString}", GetUserWorkerByNameHandler).Methods("GET")
 	router.HandleFunc("/api/userworker", PostUserWorkerHandler).Methods("POST")
+	router.HandleFunc("/api/userworker/{id}", PutUserWorkerHandler).Methods("PUT")
 	router.HandleFunc("/api/userworker/{id}", DeleteUserWorkerHandler).Methods("DELETE")
 
 	// router.HandleFunc("/api/persons", GetPersonHandler).Methods("GET")
