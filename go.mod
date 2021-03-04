@@ -1,3 +1,5 @@
+// +heroku goVersion go1.16
+
 module github.com/LaParticula/App-Test-1
 
 go 1.16
