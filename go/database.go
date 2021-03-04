@@ -41,6 +41,7 @@ func InsertDB(user User, userType int8) {
 	case 1: //worker
 		table = "user_worker"
 		vars, values = CheckDataInsert(user)
+		values = "VALUES" + values
 	}
 
 	db := OpenConnectionDB()
@@ -52,6 +53,11 @@ func InsertDB(user User, userType int8) {
 			values,
 		),
 	)
+	fmt.Println(fmt.Sprintf("INSERT INTO %s %s %s",
+		table,
+		vars,
+		values,
+	))
 	ErrorPrinter(err)
 	defer insert.Close()
 }

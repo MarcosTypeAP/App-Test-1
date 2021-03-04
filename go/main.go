@@ -20,9 +20,5 @@ func main() {
 		port = "8080"
 	}
 
-	x := 10 == 3
-
-	fmt.Println(x)
-
 	RunServer("", port)
 }
