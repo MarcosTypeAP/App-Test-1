@@ -13,6 +13,7 @@ func ErrorPrinter(err error) {
 }
 
 func main() {
+
 	port := os.Getenv("PORT")
 
 	if port == "" {
