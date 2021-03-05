@@ -97,6 +97,7 @@ func GetUserWorkerByIDHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		ErrorPrinter(err)
 	}
+
 	data, err := json.Marshal(u)
 	ErrorPrinter(err)
 	w.Header().Set("Content-Type", "application/json")
