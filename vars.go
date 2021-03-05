@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var _ = godotenv.Load(".env") // Cargar del archivo ".env"
+var _ = godotenv.Load("./env/.env") // Cargar del archivo ".env"
 var (
 	ConnectionString = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		os.Getenv("user"),

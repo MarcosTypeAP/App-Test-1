@@ -160,6 +160,12 @@ func UpdateDB(user User, userID string, userType int8) {
 		userTypeID,
 		userID,
 	))
+	fmt.Println(fmt.Sprintf("UPDATE %s SET %s WHERE `%s` = '%s'",
+		table,
+		vars,
+		userTypeID,
+		userID,
+	))
 	ErrorPrinter(err)
 
 	defer update.Close()

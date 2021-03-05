@@ -159,6 +159,13 @@ func CheckDataUpdate(user User) string {
 			vars += ", `user_image_url` = '" + user.UserImageURL + "'"
 		}
 	}
+	if user.Active {
+		if vars == "" {
+			vars = "`active` = '" + strconv.FormatBool(user.Active) + "'"
+		} else {
+			vars += ", `active` = '" + strconv.FormatBool(user.Active) + "'"
+		}
+	}
 
 	return vars
 }
